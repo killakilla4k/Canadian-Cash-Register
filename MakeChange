@@ -1,0 +1,195 @@
+package com.github.killakilla4k.Canadian-Cash-Register;
+import java.util.Scanner;
+import java.text.*; 
+
+
+
+
+public class MakeChange {
+
+	public static void main(String[] args){
+		DecimalFormat toTwo = new DecimalFormat("0.00");
+		Scanner input = new Scanner(System.in);
+		//subtotal is pretax
+		double subtotal; 
+		//payment is what the customer pays
+		double payment;
+		System.out.println("Please enter the subtotal...");
+		subtotal = input.nextDouble();
+		//this adds the tax onto subtotal and makes the actual total
+		double total = subtotal * 1.13;
+		//calls toRound, which rounds it to the nearest nickel
+		total = toRound(total);
+		//round to remove the post-hundredth numbers that multiplying by 1.13 will sometimes give you
+		total = (double)Math.round(total * 100) / 100;
+		
+		//without the (double) it ignores the decimals 
+		System.out.println("The total comes to: " + toTwo.format(total));
+		
+		
+		System.out.println("If you have cash please pay exactly, or above " + toTwo.format(total) + " dollars");
+		//input of what the customer pays you
+		payment = input.nextDouble();
+		//rounds payment to nearest nickel, dont need to use Math.round here as customers always pay to the hundredth at most
+		payment = toRound(payment);
+		
+		//if customer has insufficient funds
+		if(payment < total) {
+			System.out.println("Sorry.. you're missing " + toTwo.format(total - payment) + " dollars, please come back when you have it!");
+		}
+		//if customer does not need change
+		else if(payment == total) {
+			System.out.println("Thank you very much! You paid exactly what you need to, have a nice day!");
+		}
+		//paying above the total is the only other option here, so using else was just simpler
+		else {
+			//calls toChange, this will create a floating point error*
+			toChange(payment - total);
+			System.out.println("Your change comes to " + toTwo.format(payment - total) + " dollars");
+		}
+	
+		
+		
+		
+		
+		
+		
+		
+		
+}
+	
+	public static double toChange(double x) {
+		DecimalFormat toTwo = new DecimalFormat("0.00");
+
+		double counter;
+		//*fixes the floating point error
+		x = (double)Math.round((x) * 100) / 100;
+		System.out.println("You will recieve " +toTwo.format(x) + " dollars in change");
+		//if payment-total (change the store owes the customer) is over 20 dollars, divide by 20 as many times as possible
+		//since it acts like an integer, it will automatically round down, so modulus is not needed
+		if(x >= 20) {
+			//stores how many $20 bills are needed
+			counter = (int) x / 20;
+			System.out.println(counter + " $20 bills");
+			//change subtracted by $20*counter
+			x = x - 20*counter;
+		}
+		//to avoid float point errors, though they will not occur for whole numbers
+		x = (double)Math.round((x) * 100) / 100;
+
+		if(x >= 10) {
+			counter = (int) x / 10;
+			System.out.println(counter + " $10 bills");
+			x = x - 10*counter;
+			
+			
+		}
+		x = (double)Math.round((x) * 100) / 100;
+		if(x >= 5) {
+			counter = (int) x / 5;
+			System.out.println(counter + " $5 bills");
+			x = x - 5*counter;
+			
+			
+		}
+		x = (double)Math.round((x) * 100) / 100;
+		if(x >= 2) {
+			counter = (int) x / 2;
+			System.out.println(counter + " $2 coins");
+			x = x - 2*counter;
+			
+			
+		}
+		x = (double)Math.round((x) * 100) / 100;
+
+		if(x >= 1) {
+			counter = (int) x / 1;
+			System.out.println(counter + " $1 coins");
+			x = x - counter;
+			
+			
+		}
+		
+		x = (double)Math.round((x) * 100) / 100;
+		
+		if(x >= 0.25) {
+			counter = (int) ((x*10) / 0.25)/10;
+			System.out.println(counter + " $0.25 coins");
+			x = x - 0.25*counter;
+			
+		}
+		x = (double)Math.round((x) * 100) / 100;
+
+		if(x >= 0.10) {
+			counter = (int) ((x*10) / 0.10)/10;
+			System.out.println(counter + " $0.10 coins");
+			x = x - 0.10*counter;
+			
+			
+		}
+		x = (double)Math.round((x) * 100) / 100;
+
+		if(x >= 0.05) {
+			counter = (int) ((x*10) / 0.05)/10;
+			System.out.println(counter + " $0.05 coins");
+			x = x - 0.05*counter;
+			
+			
+		}	
+		
+		
+		
+		//returns how much change you get, this just repeats it
+		return x;
+		
+		
+}
+	
+	
+	
+	
+	public static double toRound(double x) {
+	// floating point error fix by rounding
+		// % 0.05 will show how many cents off a nickel you are
+		double mod = (double)Math.round((x % 0.05) * 100) / 100;
+		
+		//if the money is XX.X1 or XX.X6
+		if(mod == 0.01) {
+			x = x - 0.01;
+			
+		}
+		//if the money is XX.X2 or XX.X7
+
+		else if(mod == 0.02) {
+			x = x - 0.02;
+		}
+		//if the money is XX.X3 or XX.X8
+
+		else if(mod == 0.03) {
+			x = x + 0.02;
+			
+			
+		}
+		//if the money is XX.X4 or XX.X9
+
+		else if(mod == 0.04) {
+			x = x + 0.01;
+		}
+		
+		return x;
+}
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}
